@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text">14sp</dimen>
+    <dimen name="text1">16sp</dimen>
+    <dimen name="title">18sp</dimen>
+    <dimen name="title1">20sp</dimen>
+    <dimen name="name_margin_left">15dp</dimen>
+    <dimen name="country_size">32dp</dimen>
+    <dimen name="zerodp">0dp</dimen>
+    <dimen name="pie_chart">15dp</dimen>
+    <dimen name="box_dimen">10dp</dimen>
+    <dimen name="card_width">170dp</dimen>
+    <dimen name="top_layout">250dp</dimen>
+    <dimen name="top_virus">100dp</dimen>
+
+    <dimen name="_10dp">10dp</dimen>
+    <dimen name="_5dp">5dp</dimen>
+</resources>
