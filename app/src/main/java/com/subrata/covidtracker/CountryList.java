@@ -55,17 +55,23 @@ public class CountryList extends AppCompatActivity
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(charSequence.toString().isEmpty()) refreshData();
-                else if(i2 < i1) refreshData();
-//                Toast.makeText(CountryList.this,    i + " " + i1 + " "+ i2, Toast.LENGTH_SHORT).show();
 
-                List<CountryData> nList = new ArrayList<>();
-                for(CountryData d : cList)
-                    if(d.getCountry().toLowerCase().startsWith(charSequence.toString().toLowerCase()))
-                        nList.add(d);
-                cList.clear();
-                cList.addAll(nList);
-                adaptor.notifyDataSetChanged();
+                if(charSequence.toString().isEmpty()){
+                   cList.clear();
+                   cList.addAll(ExtraThings.getcList());
+                   adaptor.notifyDataSetChanged();
+                }
+                else {
+//                Toast.makeText(CountryList.this,    charSequence.toString(), Toast.LENGTH_SHORT).show();
+
+                    List<CountryData> nList = new ArrayList<>();
+                    for (CountryData d : ExtraThings.getcList())
+                        if (d.getCountry().toLowerCase().startsWith(charSequence.toString().toLowerCase()))
+                            nList.add(d);
+                    cList.clear();
+                    cList.addAll(nList);
+                    adaptor.notifyDataSetChanged();
+                }
 
             }
             @Override
@@ -83,6 +89,7 @@ public class CountryList extends AppCompatActivity
                         if(!cList.isEmpty()) cList.clear();
                         assert response.body() != null;
                         cList.addAll(response.body());
+                        ExtraThings.setcList(response.body());
                         adaptor.notifyDataSetChanged();
                     }
 

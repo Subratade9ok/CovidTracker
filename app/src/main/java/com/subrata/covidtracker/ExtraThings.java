@@ -5,6 +5,10 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import com.subrata.covidtracker.api.CountryData;
+
+import java.util.List;
+
 public class ExtraThings {
 
 
@@ -13,6 +17,15 @@ public class ExtraThings {
     private static long timeData = 0;
 
 
+    private static List<CountryData> cList;
+
+    public static List<CountryData> getcList() {
+        return cList;
+    }
+
+    public static void setcList(List<CountryData> cList) {
+        ExtraThings.cList = cList;
+    }
 
     public static int getRequestCode() {
         return REQUEST_CODE;
