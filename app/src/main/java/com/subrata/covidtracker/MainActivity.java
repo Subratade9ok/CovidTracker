@@ -8,6 +8,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
@@ -52,6 +53,7 @@ public class MainActivity
     private List<CountryData> cList;
     private String countryName;
     private LinearLayout countryDetailCard;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,7 @@ public class MainActivity
         errorMessage = findViewById(R.id.error_message);
         refreshButton = findViewById(R.id.refresh_button);
 
+
     }
 
     @Override
@@ -125,6 +128,7 @@ public class MainActivity
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onRefresh() {
+
         ApiUtilities.getApiInterface().getCountryData()
                 .enqueue(new Callback<List<CountryData>>() {
                     @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
@@ -178,7 +182,7 @@ public class MainActivity
                                 pieChart.addPieSlice(new PieModel("Active",active,getResources().getColor(R.color.active)));
                                 pieChart.addPieSlice(new PieModel("Death",death, getResources().getColor(R.color.red)));
                                 pieChart.startAnimation();
-                                Toast.makeText(getBaseContext(), "Refreshed Successfully", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getBaseContext(), "Refreshed Successfully", Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -198,7 +202,7 @@ public class MainActivity
                         countryDetailCard.setVisibility(View.GONE);
                         coronaDetailCard.setVisibility(View.GONE);
                         errorDetailCard.setVisibility(View.VISIBLE);
-                        errorType.setText(t.getMessage());
+                        errorType.setText(getResources().getString(R.string.poor_connection));
                         errorMessage.setText(R.string.internet_error);
 
                     }
@@ -216,6 +220,13 @@ public class MainActivity
 //            Toast.makeText(this, countryName, Toast.LENGTH_SHORT).show();
             onRefresh();
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    protected void onResume() {
+        onRefresh();
+        super.onResume();
     }
 
     @Override

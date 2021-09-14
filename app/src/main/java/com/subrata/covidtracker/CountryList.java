@@ -6,6 +6,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class CountryList extends AppCompatActivity
     private CountryAdaptor adaptor;
     private List<CountryData> cList;
     private AppCompatEditText searchCountry;
+    private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,13 @@ public class CountryList extends AppCompatActivity
         cList = new ArrayList<>();
         recyclerView = findViewById(R.id.country_list);
         searchCountry = findViewById(R.id.country_search);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Loading Country");
+        progressDialog.setMessage("Just a sec...");
+        progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.show();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.hasFixedSize();
@@ -62,15 +71,18 @@ public class CountryList extends AppCompatActivity
                    adaptor.notifyDataSetChanged();
                 }
                 else {
-//                Toast.makeText(CountryList.this,    charSequence.toString(), Toast.LENGTH_SHORT).show();
-
                     List<CountryData> nList = new ArrayList<>();
-                    for (CountryData d : ExtraThings.getcList())
-                        if (d.getCountry().toLowerCase().startsWith(charSequence.toString().toLowerCase()))
-                            nList.add(d);
-                    cList.clear();
-                    cList.addAll(nList);
-                    adaptor.notifyDataSetChanged();
+                    if(ExtraThings.getcList().size() > 0){
+                        for (CountryData d : ExtraThings.getcList())
+                            if (d.getCountry().toLowerCase().startsWith(charSequence.toString().toLowerCase()))
+                                nList.add(d);
+                        cList.clear();
+                        cList.addAll(nList);
+                        adaptor.notifyDataSetChanged();
+                    }
+                    else{
+                        Toast.makeText(CountryList.this, "no country loaded", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }
@@ -87,26 +99,37 @@ public class CountryList extends AppCompatActivity
                     @Override
                     public void onResponse(Call<List<CountryData>> call, Response<List<CountryData>> response) {
                         if(!cList.isEmpty()) cList.clear();
-                        assert response.body() != null;
                         cList.addAll(response.body());
                         ExtraThings.setcList(response.body());
                         adaptor.notifyDataSetChanged();
+
+                        progressDialog.dismiss();
                     }
 
                     @Override
                     public void onFailure(Call<List<CountryData>> call, Throwable t) {
-                        Snackbar.make(findViewById(R.id.country_activity),t.getMessage(),Snackbar.LENGTH_INDEFINITE)
+                        Snackbar.make(findViewById(R.id.country_activity),getResources().getString(R.string.poor_connection),Snackbar.LENGTH_INDEFINITE)
                                 .setTextColor(getResources().getColor(R.color.orange))
                                 .setBackgroundTint(getResources().getColor(R.color.white))
                                 .setActionTextColor(getResources().getColor(R.color.red))
-                                .setAction("Back", view -> {
-                                    onBackPressed();
+                                .setAction("try again", view -> {
+                                    progressDialog.show();
+                                    refreshData();
                                 })
                                 .show();
+
+                        progressDialog.dismiss();
                     }
                 });
 
     }
+
+    @Override
+    protected void onDestroy() {
+        ExtraThings.setcList(new ArrayList<>());
+        super.onDestroy();
+    }
+
     @Override
     public void onListItemClicked(View v) {
         CountryData  d = (CountryData) v.getTag();
